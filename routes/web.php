@@ -12,5 +12,13 @@
 */
 
 Route::get('/', function () {
+
     return view('welcome');
 });
+
+Route::group(['prefix' => 'api/v1', 'namespace' => 'Api\V1'], function() {
+    Route::post('scan', 'BooksController@scan');
+    Route::get('top_authors', 'BooksController@topAuthors');
+    Route::get('books', 'BooksController@getByAuthor');
+});
+
