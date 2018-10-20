@@ -11,7 +11,7 @@ $ git clone https://github.com/n1xez/booklibrary.git
 ```bash
 $ composer install
 ```
-### 4) Настройте .env (Укажите параметры соедиенения с БД, парметры среды и т. д.)
+### 4) Настройте .env (Укажите параметры соединения с БД, параметры среды и т. д.)
 ```text
 APP_ENV=local
 APP_KEY=base64:G7sAPvtgkArBCsTHA9Pf95yudu8uCeu5GLbh2RuC5RY=
@@ -52,7 +52,7 @@ $ php artisan db:seed
     "year": <int>
 }
 ```
-«isbn» уникальный парметр если уже будет найдена книга с таким парметром то она будет перезаписана 
+«isbn» уникальный параметр если уже будет найдена книга с таким параметром то она будет перезаписана 
 ### 2) Get authors top 100
 Для проверки работы следует запустить запрос GET /top_authors без параметров
 ### 3) Get books by author
