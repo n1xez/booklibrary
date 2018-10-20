@@ -48,7 +48,7 @@ class BooksController extends Controller
      */
     public function scan(Request $request)
     {
-        $this->log->info('Request has come #' . print_r($request->all()));
+        $this->log->info('Request has come #' . json_encode($request->all()));
 
         if ($this->service->validateRequest($request)) {
             $this->service->updateOrCreate($request->all());
@@ -116,7 +116,8 @@ class BooksController extends Controller
      */
     private function getLogger()
     {
-        $log = new Logger('name');
-        return $log->pushHandler(new StreamHandler('logs/scans.log', Logger::WARNING));
+        $log = new Logger('scans log');
+
+        return $log->pushHandler(new StreamHandler(storage_path('logs/scans.log'), Logger::INFO));
     }
 }

@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use Illuminate\Http\Request;
-use App\Repositories\BookRepository;
-use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use Illuminate\Http\Request;
+use Monolog\Handler\StreamHandler;
+use App\Repositories\BookRepository;
 
 /**
  * Class BookService
@@ -22,6 +22,8 @@ class BookService
      * @var RequestValidatorService
      */
     private $requestValidatorService;
+
+    private $log;
 
     /**
      * BookService constructor.
@@ -71,6 +73,10 @@ class BookService
         return $this->requestValidatorService->validate($request, $rules);
     }
 
+    /**
+     * @param Request $request
+     * @return bool
+     */
     public function validateRequestByAuthor(Request $request) : bool
     {
         $rules = [
@@ -89,7 +95,8 @@ class BookService
      */
     private function getLogger()
     {
-        $log = new Logger('name');
-        return $log->pushHandler(new StreamHandler('logs/scans.log', Logger::WARNING));
+        $log = new Logger('scans log');
+
+        return $log->pushHandler(new StreamHandler(storage_path('logs/scans.log'), Logger::INFO));
     }
 }
