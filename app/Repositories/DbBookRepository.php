@@ -20,28 +20,54 @@ class DbBookRepository extends DbRepository implements BookRepository
     /**
      * Return book by ISBN
      * @param $isbn
-     * @return mixed
+     * @return Book
      */
-    public function getByIsbn($isbn)
+    public function getByIsbn(int $isbn) : ?Book
     {
         return $this->model->where('isbn', $isbn)->first();
     }
 
     /**
-     * Return book by ISBN
+     * Return top books
      * @return Collection
      */
-    public function getTopAuthors()
+    public function getTopAuthors() : Collection
     {
         return $this->model
             ->groupBy('author_full_name')
-            ->selectRaw('books.author_full_name, books.count(isbn)')
+            ->selectRaw('author_full_name as author, count(isbn) as quantity')
+            ->orderBy('quantity', 'DESC')
             ->take(100)
             ->get();
     }
 
-    public function getByAuthor($authorName)
+    /**
+     * @inheritdoc
+     */
+    public function create(array $fields) : Book
     {
-        // TODO: Implement getByAuthor() method.
+        return $this->model->create($fields);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getBooks(array $fields): Collection
+    {
+        $query = $this->model->newQuery();
+
+        if (isset($fields['author_full_name']) && $fields['author_full_name']) {
+            $query->where('author_full_name', $fields['author_full_name']);
+        }
+
+        if (isset($fields['date_from']) && $fields['date_from']) {
+            $query->where('year', '>', $fields['date_from']);
+        }
+
+        if (isset($fields['date_to']) && $fields['date_to']) {
+            $query->where('year', '<', $fields['date_to']);
+        }
+
+        return $query->get();
     }
 }

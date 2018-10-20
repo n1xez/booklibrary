@@ -26,7 +26,7 @@ abstract class DbRepository
      * @param $id
      * @return Model
      */
-    public function getById($id)
+    public function getById(int $id) : Model
     {
         return $this->model->find($id);
     }
@@ -35,7 +35,7 @@ abstract class DbRepository
      * Get all models from DB
      * @return Collection
      */
-    public function getAll()
+    public function getAll() : Collection
     {
         return $this->model->all();
     }

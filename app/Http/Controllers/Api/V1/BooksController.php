@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use Illuminate\Http\Request;
 use App\Services\BookService;
 use App\Repositories\BookRepository;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\BookScannerRequest;
-use Illuminate\Http\Request;
 
 class BooksController extends Controller
 {
@@ -14,6 +13,7 @@ class BooksController extends Controller
      * @var BookRepository
      */
     private $repository;
+
     /**
      * @var BookService
      */
@@ -21,24 +21,32 @@ class BooksController extends Controller
 
     /**
      * BooksController constructor.
-     * @param BookRepository $repository
      * @param BookService $service
+     * @param BookRepository $repository
      */
     public function __construct(
-        BookRepository $repository,
-        BookService $service
+        BookService $service,
+        BookRepository $repository
     ) {
         $this->repository = $repository;
         $this->service = $service;
+
     }
 
     /**
      * Save scanner input
-     * @param BookScannerRequest $request
+     * @param Request $request
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function scan(BookScannerRequest $request)
+    public function scan(Request $request)
     {
-        $this->service->updateOrCreate($request->all());
+        if ($this->service->validateRequest($request)) {
+            $this->service->updateOrCreate($request->all());
+
+            return response('Success', 200);
+        }
+
+        return response('Not valid', 400);
     }
 
     /**
@@ -56,15 +64,26 @@ class BooksController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getByAuthor(Request $request)
+    public function getBooks(Request $request)
     {
-        $books = $this->repository->getByAuthor($request->get('authorName'));
+        if ($this->service->validateRequestByAuthor($request)) {
+            $fields = $request->all(['author_full_name', 'date_from', 'date_to']);
+            $books = $this->repository->getBooks($fields);
 
-        return response()->json($books);
+            return response()->json($books);
+        }
+
+        return response('Not valid', 400);
     }
 
-    public function test()
+    /**
+     * Get all book
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index()
     {
-        return 'ura';
+        $books = $this->repository->getAll();
+
+        return response()->json($books);
     }
 }

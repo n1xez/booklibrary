@@ -2,6 +2,9 @@
 
 namespace App\Repositories;
 
+use App\Models\Book;
+use Illuminate\Support\Collection;
+
 interface BookRepository
 {
     /**
@@ -9,9 +12,31 @@ interface BookRepository
      * @param $isbn
      * @return mixed
      */
-    public function getByIsbn($isbn);
+    public function getByIsbn(int $isbn) : ?Book;
 
-    public function getTopAuthors();
+    /**
+     * Return top books group by authors
+     * @return mixed
+     */
+    public function getTopAuthors() : Collection;
 
-    public function getByAuthor($authorName);
+    /**
+     * Return books by params
+     * @param array $fields
+     * @return mixed
+     */
+    public function getBooks(array $fields) : Collection;
+
+    /**
+     * Get all models from DB
+     * @return Collection
+     */
+    public function getAll() : Collection;
+
+    /**
+     * Create new book by isbn
+     * @param array $fields
+     * @return mixed
+     */
+    public function create(array $fields) : Book;
 }

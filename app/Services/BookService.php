@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Request;
 use App\Repositories\BookRepository;
 
 /**
@@ -16,34 +17,62 @@ class BookService
     private $repository;
 
     /**
-     * BookService constructor.
-     * @param BookRepository $bookRepository
+     * @var RequestValidatorService
      */
-    public function __construct(BookRepository $bookRepository)
-    {
-        $this->repository = $bookRepository;
-    }
+    private $requestValidatorService;
 
     /**
-     * @param $fields
+     * BookService constructor.
+     * @param BookRepository $bookRepository
+     * @param RequestValidatorService $requestValidatorService
      */
-    public function updateOrCreate($fields)
-    {
-        $book = $this->findOrCreateBookByIsbn($fields['isbn']);
-        $book->author_full_name = $fields['author_full_name'];
-        $book->title = $fields['title'];
-        $book->year = $fields['year'];
-        $book->save();
+    public function __construct(
+        BookRepository $bookRepository,
+        RequestValidatorService $requestValidatorService
+    ) {
+        $this->repository = $bookRepository;
+        $this->requestValidatorService = $requestValidatorService;
     }
 
     /**
      * Find book or create new book
-     * @param $isbn
-     * @return mixed|null
+     * @param $fields
+     * @return \App\Models\Book|bool|mixed
      */
-    private function findOrCreateBookByIsbn($isbn)
+    public function updateOrCreate($fields)
     {
-        return $this->repository->getByIsbn($isbn)
-            ?? $this->repository->create($isbn);
+        $book = $this->repository->getByIsbn($fields['isbn']);
+        if ($book) {
+            return $book->update($fields);
+        }
+
+        return $this->repository->create($fields);
+    }
+
+    /**
+     * @param Request $request
+     * @return bool
+     */
+    public function validateRequest(Request $request) : bool
+    {
+        $rules = [
+            'isbn' => 'required|numeric',
+            'author_full_name' => 'required|string',
+            'title' => 'required|string',
+            'year' => 'required|numeric',
+        ];
+
+        return $this->requestValidatorService->validate($request, $rules);
+    }
+
+    public function validateRequestByAuthor(Request $request) : bool
+    {
+        $rules = [
+            'author_full_name' => 'required_without:dateFrom:dateTo|string',
+            'dateFrom' => 'required_without:author_full_name|string',
+            'dateTo' => 'required_without:author_full_name|string',
+        ];
+
+        return $this->requestValidatorService->validate($request, $rules);
     }
 }

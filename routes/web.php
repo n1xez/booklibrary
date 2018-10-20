@@ -17,8 +17,12 @@ Route::get('/', function () {
 });
 
 Route::group(['prefix' => 'api/v1', 'namespace' => 'Api\V1'], function() {
+    //tasks level 1
     Route::post('scan', 'BooksController@scan');
     Route::get('top_authors', 'BooksController@topAuthors');
-    Route::get('books', 'BooksController@getByAuthor');
-});
+    Route::get('books', 'BooksController@getBooks');
 
+    //tasks level 2
+    //Get books in a range of years
+    Route::get('average_by_status', 'BooksController@getAverageByStatus');
+});
