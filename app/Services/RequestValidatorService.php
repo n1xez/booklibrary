@@ -76,15 +76,15 @@ class RequestValidatorService
      */
     private function required_without($request, $field, $params = []) : bool
     {
-        $emptyParams = false;
+        $existParams = true;
         foreach ($params as $param) {
-            if (empty($request->get($param))) {
-                $emptyParams = true;
+            if (!empty($request->get($param))) {
+                $existParams = false;
                 break;
             }
         }
 
-        return $emptyParams
+        return $existParams
             ? !empty($request->get($field))
             : true;
     }
