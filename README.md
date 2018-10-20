@@ -40,8 +40,8 @@ $ php artisan migrate
 $ php artisan db:seed
 ```
 
-##USAGE
-###In Level 1 
+## USAGE
+### In Level 1 
 ### 1) Save scanner input
 Для проверки работы следует запустить запрос POST /scan с параметрами:
 ```json
@@ -59,7 +59,7 @@ $ php artisan db:seed
 Для проверки работы следует запустить запрос GET /books с параметрами:
 /books?author_full_name={{ Имя автора в кодировке url }}
 
-###In Level 2
+### In Level 2
 ### 1) Update “Get books by author” method
 Этот метод реализован через тот же роут что и "Get books by author" GET /books
 /books?author_full_name={{ Неточное имя автора в кодировке url }}
