@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Api\V1;
 use Monolog\Logger;
 use Illuminate\Http\Request;
 use App\Services\BookService;
+use Monolog\Handler\StreamHandler;
 use App\Repositories\BookRepository;
 use App\Http\Controllers\Controller;
-use Monolog\Handler\StreamHandler;
 
 class BooksController extends Controller
 {

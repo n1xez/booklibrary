@@ -39,6 +39,7 @@ class RequestValidatorService
     }
 
     /**
+     * Rule check on empty
      * @param $request
      * @param $field
      * @return bool
@@ -49,6 +50,7 @@ class RequestValidatorService
     }
 
     /**
+     * Rule check on string
      * @param $request
      * @param $field
      * @return bool
@@ -59,6 +61,7 @@ class RequestValidatorService
     }
 
     /**
+     * Rule check on integer
      * @param $request
      * @param $field
      * @return bool
@@ -69,6 +72,7 @@ class RequestValidatorService
     }
 
     /**
+     * Rule check on null another fields
      * @param $request
      * @param $field
      * @param array $params
