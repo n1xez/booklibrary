@@ -166,6 +166,11 @@ return [
         /*
          * Package Service Providers...
          */
+        TomLingham\Searchy\SearchyServiceProvider::class,
+
+        /*
+         * Repositories...
+         */
         App\Providers\Repositories\BooksRepositoryServiceProvider::class,
 
         //
@@ -226,7 +231,7 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-
+        'Searchy' => TomLingham\Searchy\Facades\Searchy::class,
     ],
 
 ];

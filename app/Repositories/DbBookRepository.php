@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Book;
 use Illuminate\Support\Collection;
+use TomLingham\Searchy\Facades\Searchy;
 
 class DbBookRepository extends DbRepository implements BookRepository
 {
@@ -52,12 +53,13 @@ class DbBookRepository extends DbRepository implements BookRepository
     /**
      * @inheritdoc
      */
-    public function getBooks(array $fields): Collection
+    public function getBooks(array $fields) : Collection
     {
         $query = $this->model->newQuery();
 
         if (isset($fields['author_full_name']) && $fields['author_full_name']) {
-            $query->where('author_full_name', $fields['author_full_name']);
+            $bookIds = $this->fuzzySearchByAuthor($fields['author_full_name']);
+            $query->whereIn('id', $bookIds);
         }
 
         if (isset($fields['date_from']) && $fields['date_from']) {
@@ -69,5 +71,27 @@ class DbBookRepository extends DbRepository implements BookRepository
         }
 
         return $query->get();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAverageByYears() : Collection
+    {
+        return $this->model
+            ->groupBy('year')
+            ->groupBy('author_full_name')
+            ->selectRaw('year, author_full_name, count(*) as average')
+            ->get()
+            ->groupBy('year');
+    }
+
+    private function fuzzySearchByAuthor($authorName) : Collection
+    {
+        return Searchy::search('books')
+            ->fields('author_full_name')
+            ->query($authorName)
+            ->get()
+            ->pluck('id');
     }
 }

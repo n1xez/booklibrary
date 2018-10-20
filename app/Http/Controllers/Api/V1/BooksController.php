@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use Monolog\Logger;
 use Illuminate\Http\Request;
 use App\Services\BookService;
 use App\Repositories\BookRepository;
 use App\Http\Controllers\Controller;
+use Monolog\Handler\StreamHandler;
 
 class BooksController extends Controller
 {
@@ -20,9 +22,15 @@ class BooksController extends Controller
     private $service;
 
     /**
+     * @var Logger
+     */
+    private $log;
+
+    /**
      * BooksController constructor.
      * @param BookService $service
      * @param BookRepository $repository
+     * @throws \Exception
      */
     public function __construct(
         BookService $service,
@@ -30,7 +38,7 @@ class BooksController extends Controller
     ) {
         $this->repository = $repository;
         $this->service = $service;
-
+        $this->log = $this->getLogger();
     }
 
     /**
@@ -40,11 +48,14 @@ class BooksController extends Controller
      */
     public function scan(Request $request)
     {
+        $this->log->info('Request has come #' . print_r($request->all()));
+
         if ($this->service->validateRequest($request)) {
             $this->service->updateOrCreate($request->all());
 
             return response('Success', 200);
         }
+        $this->log->error('Bad request #');
 
         return response('Not valid', 400);
     }
@@ -77,6 +88,17 @@ class BooksController extends Controller
     }
 
     /**
+     * Return average books per years per per authors
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAverageByYears()
+    {
+        $books = $this->repository->getAverageByYears();
+
+        return response()->json($books);
+    }
+
+    /**
      * Get all book
      * @return \Illuminate\Http\JsonResponse
      */
@@ -85,5 +107,16 @@ class BooksController extends Controller
         $books = $this->repository->getAll();
 
         return response()->json($books);
+    }
+
+    /**
+     * Return logger
+     * @return Logger
+     * @throws \Exception
+     */
+    private function getLogger()
+    {
+        $log = new Logger('name');
+        return $log->pushHandler(new StreamHandler('logs/scans.log', Logger::WARNING));
     }
 }

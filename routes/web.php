@@ -23,6 +23,5 @@ Route::group(['prefix' => 'api/v1', 'namespace' => 'Api\V1'], function() {
     Route::get('books', 'BooksController@getBooks');
 
     //tasks level 2
-    //Get books in a range of years
-    Route::get('average_by_status', 'BooksController@getAverageByStatus');
+    Route::get('average_by_years', 'BooksController@getAverageByYears');
 });

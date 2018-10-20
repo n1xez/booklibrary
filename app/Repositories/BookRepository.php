@@ -28,6 +28,12 @@ interface BookRepository
     public function getBooks(array $fields) : Collection;
 
     /**
+     * Return average books per years per per authors
+     * @return Collection
+     */
+    public function getAverageByYears() : Collection;
+
+    /**
      * Get all models from DB
      * @return Collection
      */
